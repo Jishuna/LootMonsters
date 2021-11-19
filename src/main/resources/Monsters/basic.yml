@@ -1,0 +1,25 @@
+name: 'basic'
+weight: 100
+
+entity-type: 'zombie'
+
+equipment:
+  helmet: PLAYER_HEAD,5a736eb1a7ce5a5f5d5b168931fa31396386c160568b41964ba86cdb9ed6be
+  chestplate: LEATHER_CHESTPLATE,112,112,112
+  leggings: LEATHER_LEGGINGS,112,112,112
+  boots: LEATHER_BOOTS,112,112,112
+  main-hand:
+  off-hand:
+  
+min-drops: 1
+max-drops: 3
+
+loot:  
+  1:
+    type: IRON_INGOT
+    count: 1
+    weight: 100
+  2:
+    type: GOLD_INGOT
+    count: 1
+    weight: 10

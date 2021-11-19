@@ -1,0 +1,53 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+	id 'java'
+	id "com.github.johnrengelman.shadow" version "7.0.0"
+}
+
+group 'me.jishuna.lootmonsters'
+version '1.0.0'
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_16
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+    maven {
+       name = "sonatype-oss-snapshots"
+       url = "https://oss.sonatype.org/content/repositories/snapshots/"
+   }
+}
+
+dependencies {
+    compileOnly group: 'org.spigotmc', name: 'spigot', version: '1.17-R0.1-SNAPSHOT'
+    implementation group: 'me.jishuna.jishunacommonlib', name: 'JishunaCommonLib', version: '1.0.0'
+    implementation group: 'org.bstats', name: 'bstats-bukkit', version: '2.2.1'
+    implementation group: 'net.kyori', name: 'adventure-text-minimessage', version: '4.2.0-SNAPSHOT'
+    implementation group: 'net.kyori', name: 'adventure-text-serializer-legacy', version: '4.8.1'
+}
+
+
+shadowJar {
+  	minimize()
+    setArchiveName('LootMonsters-' + this.version + '.jar')                                              
+    relocate 'me.jishuna.commonlib', 'me.jishuna.lootmonsters.libs.jishunacommonlib' 
+    relocate 'org.bstats', 'me.jishuna.lootmonsters.libs.bstats'
+    relocate 'net.kyori', 'me.jishuna.lootmonsters.libs'
+    destinationDirectory = file("./target/")                                   
+}
+
+
+build {
+    dependsOn shadowJar
+}
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}
+
+shadowJar.shouldRunAfter build
+build.shouldRunAfter subprojects.build

@@ -1,0 +1,5 @@
+name: LootMonsters
+version: @version@
+main: me.jishuna.lootmonsters.LootMonsters
+authors: [Jishuna]
+api-version: 1.17
