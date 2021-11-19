@@ -2,4 +2,5 @@ name: LootMonsters
 version: @version@
 main: me.jishuna.lootmonsters.LootMonsters
 authors: [Jishuna]
+softdepend: [ModernEnchants]
 api-version: 1.17

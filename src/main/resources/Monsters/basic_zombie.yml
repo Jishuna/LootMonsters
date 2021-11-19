@@ -7,12 +7,20 @@ entity-type: 'zombie'
 health: 40
 
 equipment:
-  helmet: PLAYER_HEAD,5a736eb1a7ce5a5f5d5b168931fa31396386c160568b41964ba86cdb9ed6be
-  chestplate: LEATHER_CHESTPLATE,112,112,112
-  leggings: LEATHER_LEGGINGS,112,112,112
-  boots: LEATHER_BOOTS,112,112,112
-  main-hand: WOODEN_SWORD
+  helmet: 
+    type: PLAYER_HEAD,5a736eb1a7ce5a5f5d5b168931fa31396386c160568b41964ba86cdb9ed6be
+  chestplate: 
+    type: LEATHER_CHESTPLATE,112,112,112
+  leggings: 
+    type: LEATHER_LEGGINGS,112,112,112
+  boots: 
+    type: LEATHER_BOOTS,112,112,112
+  main-hand: 
+    type: WOODEN_SWORD
+    enchantments:
+      - 'minecraft:sharpness,1'
   off-hand:
+    type:
   
 min-drops: 1
 max-drops: 3
