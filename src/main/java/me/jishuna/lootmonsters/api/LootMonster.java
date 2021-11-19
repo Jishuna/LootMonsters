@@ -4,6 +4,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,8 +26,13 @@ public class LootMonster {
 
 	private final int minDrops;
 	private final int maxDrops;
+	
+	private final double health;
 
 	private final ItemStack[] armor = new ItemStack[4];
+	private ItemStack mainHand;
+	private ItemStack offHand;
+	
 	private final WeightedRandom<ItemStack> loot = new WeightedRandom<>();
 
 	public LootMonster(ConfigurationSection section) {
@@ -39,6 +45,8 @@ public class LootMonster {
 
 		this.minDrops = section.getInt("min-drops", 1);
 		this.maxDrops = section.getInt("max-drops", 3);
+		
+		this.health = section.getDouble("health", 20);
 
 		ConfigurationSection gearSection = section.getConfigurationSection("equipment");
 
@@ -47,6 +55,9 @@ public class LootMonster {
 			armor[2] = ItemParser.parseItem(gearSection.getString("chestplate"));
 			armor[1] = ItemParser.parseItem(gearSection.getString("leggings"));
 			armor[0] = ItemParser.parseItem(gearSection.getString("boots"));
+			
+			this.mainHand = ItemParser.parseItem(gearSection.getString("main-hand"));
+			this.offHand = ItemParser.parseItem(gearSection.getString("off-hand"));
 		}
 
 		ConfigurationSection lootSection = section.getConfigurationSection("loot");
@@ -81,14 +92,21 @@ public class LootMonster {
 
 		if (!(entity instanceof LivingEntity livingEntity))
 			return;
+		
+		livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(this.health);
+		livingEntity.setHealth(this.health);
 
 		EntityEquipment equipment = livingEntity.getEquipment();
 		equipment.setArmorContents(this.armor);
+		equipment.setItemInMainHand(this.mainHand);
+		equipment.setItemInOffHand(this.offHand);
 
 		equipment.setHelmetDropChance(0.0f);
 		equipment.setChestplateDropChance(0.0f);
 		equipment.setLeggingsDropChance(0.0f);
 		equipment.setBootsDropChance(0.0f);
+		equipment.setItemInMainHandDropChance(0.0f);
+		equipment.setItemInOffHandDropChance(0.0f);
 	}
 
 	public void handleDeath(EntityDeathEvent event) {
