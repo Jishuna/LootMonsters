@@ -1,3 +1,7 @@
+# The percentage chance for a naturally spawning monster to be replaced, (0.5 = 1 / 200), set to 0 to disable.
 spawn-chance-natural: 0.5
+# The percentage chance for a monster from a spawner to be replaced, set to 0 to disable.
 spawn-chance-spawner: 0
+
+# Whether loot monsters should only drop special items when killed by a player.
 player-kill-only: true

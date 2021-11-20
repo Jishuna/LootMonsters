@@ -1,24 +1,23 @@
 package me.jishuna.lootmonsters.api;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffect;
 
-import me.jishuna.commonlib.items.ItemParser;
 import me.jishuna.commonlib.random.WeightedRandom;
 
 public class LootMonster {
@@ -37,6 +36,8 @@ public class LootMonster {
 	private ItemStack mainHand;
 	private ItemStack offHand;
 
+	private final Set<PotionEffect> effects = new HashSet<>();
+	private final Set<String> replaces;
 	private final WeightedRandom<ItemStack> loot = new WeightedRandom<>();
 
 	public LootMonster(ConfigurationSection section) {
@@ -47,6 +48,8 @@ public class LootMonster {
 
 		this.entityType = EntityType.valueOf(section.getString("entity-type", "zombie").toUpperCase());
 
+		this.replaces = section.getStringList("replaces").stream().map(String::toUpperCase).collect(Collectors.toSet());
+
 		this.minDrops = section.getInt("min-drops", 1);
 		this.maxDrops = section.getInt("max-drops", 3);
 
@@ -55,13 +58,13 @@ public class LootMonster {
 		ConfigurationSection gearSection = section.getConfigurationSection("equipment");
 
 		if (gearSection != null) {
-			armor[3] = parseEquipment(gearSection, "helmet");
-			armor[2] = parseEquipment(gearSection, "chestplate");
-			armor[1] = parseEquipment(gearSection, "leggings");
-			armor[0] = parseEquipment(gearSection, "boots");
+			armor[3] = Utils.parseItem(this, gearSection.getConfigurationSection("helmet"));
+			armor[2] = Utils.parseItem(this, gearSection.getConfigurationSection("chestplate"));
+			armor[1] = Utils.parseItem(this, gearSection.getConfigurationSection("leggings"));
+			armor[0] = Utils.parseItem(this, gearSection.getConfigurationSection("boots"));
 
-			this.mainHand = parseEquipment(gearSection, "main-hand");
-			this.offHand = parseEquipment(gearSection, "off-hand");
+			this.mainHand = Utils.parseItem(this, gearSection.getConfigurationSection("main-hand"));
+			this.offHand = Utils.parseItem(this, gearSection.getConfigurationSection("off-hand"));
 		}
 
 		ConfigurationSection lootSection = section.getConfigurationSection("loot");
@@ -70,47 +73,16 @@ public class LootMonster {
 			for (String key : lootSection.getKeys(false)) {
 				ConfigurationSection lootEntry = lootSection.getConfigurationSection(key);
 
-				ItemStack item = ItemParser.parseItem(lootEntry.getString("type"));
-				item.setAmount(lootEntry.getInt("count", 1));
-
-				this.loot.add(lootEntry.getDouble("weight", 100), item);
+				this.loot.add(lootEntry.getDouble("weight", 100), Utils.parseItem(this, lootEntry));
 			}
 		}
-	}
 
-	private ItemStack parseEquipment(ConfigurationSection section, String path) {
-		ConfigurationSection itemSection = section.getConfigurationSection(path);
-
-		if (itemSection == null)
-			return null;
-
-		ItemStack item = ItemParser.parseItem(itemSection.getString("type"));
-		if (item == null)
-			return item;
-
-		ItemMeta meta = item.getItemMeta();
-
-		for (String enchant : itemSection.getStringList("enchantments")) {
-			String[] data = enchant.split(",");
-
-			if (data.length <= 1)
-				continue;
-
-			Enchantment enchantment = Enchantment.getByKey(NamespacedKey.fromString(data[0]));
-
-			if (enchantment == null)
-				continue;
-
-			int level = 1;
-
-			if (StringUtils.isNumeric(data[1])) {
-				level = Integer.parseInt(data[1]);
-			}
-
-			meta.addEnchant(enchantment, level, true);
+		for (String effect : section.getStringList("potion-effects")) {
+			PotionEffect potionEffect = Utils.parsePotionEffect(this, effect);
+			
+			if (potionEffect != null)
+				this.effects.add(potionEffect);
 		}
-		item.setItemMeta(meta);
-		return item;
 	}
 
 	public String getName() {
@@ -121,6 +93,10 @@ public class LootMonster {
 		return weight;
 	}
 
+	public boolean canReplace(EntityType type) {
+		return this.replaces.contains(type.toString());
+	}
+
 	public void spawn(Location location) {
 		World world = location.getWorld();
 
@@ -128,9 +104,12 @@ public class LootMonster {
 		entity.setCustomName(this.displayName);
 
 		entity.getPersistentDataContainer().set(PluginKeys.MONSTER_TYPE.getKey(), PersistentDataType.STRING, this.name);
+		entity.setPersistent(false);
 
 		if (!(entity instanceof LivingEntity livingEntity))
 			return;
+
+		this.effects.forEach(livingEntity::addPotionEffect);
 
 		livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(this.health);
 		livingEntity.setHealth(this.health);
@@ -140,16 +119,18 @@ public class LootMonster {
 		equipment.setItemInMainHand(this.mainHand);
 		equipment.setItemInOffHand(this.offHand);
 
-		equipment.setHelmetDropChance(2.0f);
-		equipment.setChestplateDropChance(2.0f);
-		equipment.setLeggingsDropChance(2.0f);
-		equipment.setBootsDropChance(2.0f);
-		equipment.setItemInMainHandDropChance(2.0f);
-		equipment.setItemInOffHandDropChance(2.0f);
+		equipment.setHelmetDropChance(0.0f);
+		equipment.setChestplateDropChance(0.0f);
+		equipment.setLeggingsDropChance(0.0f);
+		equipment.setBootsDropChance(0.0f);
+		equipment.setItemInMainHandDropChance(0.0f);
+		equipment.setItemInOffHandDropChance(0.0f);
 	}
 
 	public void handleDeath(EntityDeathEvent event) {
-		int count = ThreadLocalRandom.current().nextInt(this.minDrops, this.maxDrops);
+		event.getDrops().clear();
+
+		int count = ThreadLocalRandom.current().nextInt(this.minDrops, this.maxDrops + 1);
 		for (int i = 0; i < count; i++) {
 			event.getDrops().add(this.loot.poll());
 		}

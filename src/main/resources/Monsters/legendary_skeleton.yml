@@ -1,0 +1,76 @@
+name: 'legendary_skeleton'
+display-name: '&6Legendary Loot Skeleton'
+weight: 2
+
+entity-type: 'skeleton'
+
+replaces:
+  - 'skeleton'
+
+health: 200
+
+equipment:
+  helmet: 
+    type: PLAYER_HEAD,d6ee9dd6353bf68ec994a4fd9a1ba5c4e47e885c7a8ba5a37b0c8099122dce11
+  chestplate: 
+    type: LEATHER_CHESTPLATE,255,215,0
+    enchantments:
+      - 'minecraft:protection,4'
+      - 'minecraft:fire_protection,4'
+      - 'minecraft:blast_protection,4'
+      - 'minecraft:projectile_protection,4'
+  leggings: 
+    type: LEATHER_LEGGINGS,255,215,0
+  boots: 
+    type: LEATHER_BOOTS,255,215,0
+  main-hand: 
+    type: BOW
+    enchantments:
+      - 'minecraft:power,5'
+      - 'minecraft:flame,3'
+  off-hand:
+    type:
+    
+potion-effects:
+  - 'glowing,1'
+  
+min-drops: 2
+max-drops: 3
+
+loot:  
+  1:
+    type: IRON_INGOT
+    count: 32
+    weight: 100
+  2:
+    type: EXPERIENCE_BOTTLE
+    count: 32
+    weight: 80
+  3:
+    type: GOLD_INGOT
+    count: 24
+    weight: 80
+  4:
+    type: SHULKER_SHELL
+    count: 4
+    weight: 50
+  5:
+    type: DIAMOND
+    count: 8
+    weight: 20
+  6:
+    type: EMERALD
+    count: 16
+    weight: 40
+  7:
+    type: NETHERITE_SCRAP
+    count: 6
+    weight: 10
+  8:
+    type: NETHERITE_INGOT
+    count: 1
+    weight: 5
+  9:
+    type: ELYTRA
+    count: 1
+    weight: 2

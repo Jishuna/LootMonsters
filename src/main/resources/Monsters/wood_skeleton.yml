@@ -1,0 +1,53 @@
+name: 'wood_skeleton'
+display-name: '<#6F4E37>Wooden Loot Skeleton</#6F4E37>'
+weight: 50
+
+entity-type: 'skeleton'
+
+replaces:
+  - 'skeleton'
+
+health: 40
+
+equipment:
+  helmet: 
+    type: OAK_LEAVES
+  chestplate: 
+    type: LEATHER_CHESTPLATE,111,78,55
+  leggings: 
+    type: LEATHER_LEGGINGS,111,78,55
+  boots: 
+    type: LEATHER_BOOTS,111,78,55
+  main-hand: 
+    type: BOW
+  off-hand:
+    type:
+  
+min-drops: 1
+max-drops: 2
+
+loot:  
+  1:
+    type: OAK_LOG
+    count: 8
+    weight: 100
+  2:
+    type: SPRUCE_LOG
+    count: 8
+    weight: 100
+  3:
+    type: BIRCH_LOG
+    count: 8
+    weight: 100
+  4:
+    type: JUNGLE_LOG
+    count: 8
+    weight: 100
+  5:
+    type: ACACIA_LOG
+    count: 8
+    weight: 100
+  6:
+    type: DARK_OAK_LOG
+    count: 8
+    weight: 100

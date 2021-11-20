@@ -2,5 +2,17 @@ name: LootMonsters
 version: @version@
 main: me.jishuna.lootmonsters.LootMonsters
 authors: [Jishuna]
-softdepend: [ModernEnchants]
 api-version: 1.17
+
+commands:
+  lootmonsters:
+    description: 'Base plugin command'
+    aliases: [lootm]
+permissions:
+  lootmonsters.command:
+    default: true
+  lootmonsters.command.info:
+    default: true
+  lootmonsters.command.reload:
+    default: op
+    

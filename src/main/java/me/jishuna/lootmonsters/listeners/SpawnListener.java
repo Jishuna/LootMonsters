@@ -9,6 +9,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 import me.jishuna.commonlib.utils.NumberUtils;
 import me.jishuna.lootmonsters.LootMonsters;
+import me.jishuna.lootmonsters.api.LootMonster;
 
 public class SpawnListener implements Listener {
 
@@ -37,10 +38,12 @@ public class SpawnListener implements Listener {
 		if (threshold <= 0 || chance >= threshold)
 			return;
 
-		event.setCancelled(true);
-		
 		ignore = true;
-		this.plugin.getMonsterRegistry().getRandomMonster().spawn(event.getLocation());
+		LootMonster monster = this.plugin.getMonsterRegistry().getRandomMonster(event.getEntityType());
+		if (monster != null) {
+			monster.spawn(event.getLocation());
+			event.setCancelled(true);
+		}
 		ignore = false;
 	}
 

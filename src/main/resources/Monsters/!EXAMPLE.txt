@@ -1,0 +1,66 @@
+# An example monster file with comments, this monster should be valid if the file extension is changed to .yml
+
+# Internal name of the monster, must be unique.
+name: 'example_monster'
+
+# Display name of the monster, & codes and mini-message formatting are supported.
+display-name: '&6Example Monster'
+
+# The weight of this monster being chosen, higher numbers make it more common.
+weight: 100
+
+# The type of entity for this monster.
+entity-type: 'spider'
+
+# A list of entity types this monster can replace.
+replaces:
+  - 'spider'
+  - 'creeper'
+  - 'zombie'
+
+# The health of this monster, in half hearts.
+health: 40
+
+# Equipment, does not have a chance to drop when killed.
+equipment:
+  helmet: 
+    # The item type, PLAYER_HEADS may contain extra data for the head texture, use the Minecraft-URL value from minecraft-heads.com
+    type: PLAYER_HEAD,5a736eb1a7ce5a5f5d5b168931fa31396386c160568b41964ba86cdb9ed6be
+  chestplate: 
+    # Leather armor can contain extra data for the RGB color
+    type: LEATHER_CHESTPLATE,112,112,112
+  leggings: 
+    type: LEATHER_LEGGINGS,112,112,112
+  boots: 
+    type: LEATHER_BOOTS,112,112,112
+  main-hand: 
+    type: IRON_SWORD
+    # Enchantments can be added to an item using their registry name, always minecraft:name for vanilla enchantments.
+    enchantments:
+      - 'minecraft:sharpness,10'
+  off-hand:
+    # An empty type will result in no item in that slot.
+    type:
+  
+# The minimum number of loot items to drop.
+min-drops: 1
+# The maximum number of loot items to drop.
+max-drops: 2
+
+# Loot to drop on death.
+loot:  
+  1:
+    # Type for loot uses the same formatting as it does in equipment.
+    type: STONE_SWORD
+    # The amount of the item to drop.
+    count: 4
+    # The weight of this item being chosen, higher numbers make it more common.
+    weight: 100
+    # Enchantments also work the same way they do in equipment.
+    enchantments:
+      - 'minecraft:sharpness,1'
+  2:
+    type: BEACON
+    count: 1
+    # Weight can use decimal values.
+    weight: 0.1
